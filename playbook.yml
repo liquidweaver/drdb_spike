@@ -1,0 +1,18 @@
+---
+- hosts: all
+  sudo: yes
+  tasks:
+    - name: DRBD package, kernel module
+      apt: name={{ item }} state=present
+      with_items:
+      - linux-image-extra-virtual
+      - drbd8-utils
+
+    - name: drbd module
+      modprobe: name=drbd state=present
+
+    - name: DRBD configuration
+      copy: src={{ item }} dest=/etc/drbd.d/{{ item }}
+      with_items:
+      - "global_common.conf"
+      - "r0.res"
